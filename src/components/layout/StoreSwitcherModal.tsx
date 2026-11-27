@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { Modal, Pressable, StyleSheet, View } from 'react-native';
 
+import { useTheme } from '@/hooks/use-theme';
 import { StoreAccount, StoreLocation } from '@/types/dashboard';
 import { ThemedText } from '@/ui/themedText';
 import { ThemedView } from '@/ui/themedView';
@@ -27,6 +28,7 @@ export function StoreSwitcherModal({
   onSelectAccount,
   onSelectLocation,
 }: StoreSwitcherModalProps) {
+  const theme = useTheme();
   const [accountDropdownOpen, setAccountDropdownOpen] = useState(false);
   const [locationDropdownOpen, setLocationDropdownOpen] = useState(false);
 
@@ -36,30 +38,33 @@ export function StoreSwitcherModal({
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <Pressable style={styles.backdrop} onPress={onClose}>
         <Pressable style={styles.cardWrap} onPress={(e) => e.stopPropagation()}>
-          <ThemedView type="background" style={styles.card}>
+          <ThemedView type="background" style={[styles.card, { borderColor: theme.border }]}>
             <View style={styles.header}>
               <ThemedText type="smallBold" style={styles.title}>
                 Switch store
               </ThemedText>
               <Pressable onPress={onClose} hitSlop={8} style={styles.closeBtn}>
-                <Ionicons name="close" size={18} color="#64748B" />
+                <Ionicons name="close" size={18} color={theme.iconMuted} />
               </Pressable>
             </View>
 
-            <View style={styles.divider} />
+            <View style={[styles.divider, { backgroundColor: theme.borderSubtle }]} />
 
             <View style={styles.body}>
               <ThemedText type="smallBold" themeColor="textSecondary" style={styles.fieldLabel}>
                 ACCOUNT
               </ThemedText>
               <Pressable
-                style={styles.selectBox}
+                style={[
+                  styles.selectBox,
+                  { backgroundColor: theme.inputBackground, borderColor: theme.border },
+                ]}
                 onPress={() => {
                   setAccountDropdownOpen((prev) => !prev);
                   setLocationDropdownOpen(false);
                 }}>
                 <View style={styles.selectLeft}>
-                  <Ionicons name="business-outline" size={16} color="#2563EB" />
+                  <Ionicons name="business-outline" size={16} color={theme.primary} />
                   <ThemedText type="small" style={styles.selectText}>
                     {selectedAccount.name}
                   </ThemedText>
@@ -67,18 +72,23 @@ export function StoreSwitcherModal({
                 <Ionicons
                   name={accountDropdownOpen ? 'chevron-up' : 'chevron-down'}
                   size={16}
-                  color="#64748B"
+                  color={theme.iconMuted}
                 />
               </Pressable>
 
               {accountDropdownOpen && (
-                <ThemedView type="background" style={styles.dropdownMenu}>
+                <ThemedView
+                  type="background"
+                  style={[styles.dropdownMenu, { borderColor: theme.border }]}>
                   {accounts.map((acc) => {
                     const isActive = acc.id === selectedAccount.id;
                     return (
                       <Pressable
                         key={acc.id}
-                        style={[styles.dropdownItem, isActive && styles.dropdownItemActive]}
+                        style={[
+                          styles.dropdownItem,
+                          isActive && { backgroundColor: theme.primarySoft },
+                        ]}
                         onPress={() => {
                           onSelectAccount(acc);
                           const firstLoc = locations.find((l) => l.accountId === acc.id);
@@ -87,13 +97,10 @@ export function StoreSwitcherModal({
                         }}>
                         <ThemedText
                           type={isActive ? 'smallBold' : 'small'}
-                          style={[
-                            styles.dropdownItemText,
-                            isActive && styles.dropdownItemTextActive,
-                          ]}>
+                          style={[styles.dropdownItemText, isActive && { color: theme.primary }]}>
                           {acc.name}
                         </ThemedText>
-                        {isActive && <Ionicons name="checkmark" size={15} color="#2563EB" />}
+                        {isActive && <Ionicons name="checkmark" size={15} color={theme.primary} />}
                       </Pressable>
                     );
                   })}
@@ -107,7 +114,10 @@ export function StoreSwitcherModal({
                 LOCATION
               </ThemedText>
               <Pressable
-                style={styles.selectBox}
+                style={[
+                  styles.selectBox,
+                  { backgroundColor: theme.inputBackground, borderColor: theme.border },
+                ]}
                 onPress={() => {
                   setLocationDropdownOpen((prev) => !prev);
                   setAccountDropdownOpen(false);
@@ -121,18 +131,23 @@ export function StoreSwitcherModal({
                 <Ionicons
                   name={locationDropdownOpen ? 'chevron-up' : 'chevron-down'}
                   size={16}
-                  color="#64748B"
+                  color={theme.iconMuted}
                 />
               </Pressable>
 
               {locationDropdownOpen && (
-                <ThemedView type="background" style={styles.dropdownMenu}>
+                <ThemedView
+                  type="background"
+                  style={[styles.dropdownMenu, { borderColor: theme.border }]}>
                   {filteredLocations.map((loc) => {
                     const isActive = loc.id === selectedLocation.id;
                     return (
                       <Pressable
                         key={loc.id}
-                        style={[styles.dropdownItem, isActive && styles.dropdownItemActive]}
+                        style={[
+                          styles.dropdownItem,
+                          isActive && { backgroundColor: theme.primarySoft },
+                        ]}
                         onPress={() => {
                           onSelectLocation(loc);
                           setLocationDropdownOpen(false);
@@ -140,13 +155,10 @@ export function StoreSwitcherModal({
                         }}>
                         <ThemedText
                           type={isActive ? 'smallBold' : 'small'}
-                          style={[
-                            styles.dropdownItemText,
-                            isActive && styles.dropdownItemTextActive,
-                          ]}>
+                          style={[styles.dropdownItemText, isActive && { color: theme.primary }]}>
                           {loc.name}
                         </ThemedText>
-                        {isActive && <Ionicons name="checkmark" size={15} color="#2563EB" />}
+                        {isActive && <Ionicons name="checkmark" size={15} color={theme.primary} />}
                       </Pressable>
                     );
                   })}
@@ -163,7 +175,7 @@ export function StoreSwitcherModal({
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.28)',
+    backgroundColor: 'rgba(15, 23, 42, 0.45)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
@@ -175,10 +187,9 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    shadowColor: '#0F172A',
+    shadowColor: '#000000',
     shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.12,
+    shadowOpacity: 0.2,
     shadowRadius: 24,
     elevation: 8,
     overflow: 'hidden',
@@ -199,7 +210,6 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: '#F1F5F9',
   },
   body: {
     padding: 16,
@@ -215,11 +225,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
     borderRadius: 10,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    backgroundColor: '#FFFFFF',
   },
   selectLeft: {
     flexDirection: 'row',
@@ -233,7 +241,6 @@ const styles = StyleSheet.create({
   dropdownMenu: {
     marginTop: 6,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
     borderRadius: 10,
     overflow: 'hidden',
   },
@@ -244,14 +251,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 9,
   },
-  dropdownItemActive: {
-    backgroundColor: '#EFF6FF',
-  },
   dropdownItemText: {
     fontSize: 13,
     lineHeight: 18,
-  },
-  dropdownItemTextActive: {
-    color: '#1D64D8',
   },
 });

@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { StyleSheet, useWindowDimensions, View } from 'react-native';
 
+import { useTheme, useThemeMode } from '@/hooks/use-theme';
 import { KpiStat } from '@/types/dashboard';
 import { ThemedText } from '@/ui/themedText';
 import { ThemedView } from '@/ui/themedView';
@@ -13,6 +14,8 @@ interface StatCardsProps {
 export function StatCards({ stats }: StatCardsProps) {
   const { width } = useWindowDimensions();
   const isWide = width >= 900;
+  const theme = useTheme();
+  const { isDark } = useThemeMode();
 
   return (
     <View style={styles.grid}>
@@ -20,12 +23,24 @@ export function StatCards({ stats }: StatCardsProps) {
         <ThemedView
           key={stat.id}
           type="background"
-          style={[styles.card, isWide ? styles.cardQuarter : styles.cardHalf]}>
+          style={[
+            styles.card,
+            { borderColor: theme.border },
+            isWide ? styles.cardQuarter : styles.cardHalf,
+          ]}>
           <View style={styles.topRow}>
-            <ThemedText type="small" themeColor="textSecondary" style={styles.label} numberOfLines={1}>
+            <ThemedText
+              type="small"
+              themeColor="textSecondary"
+              style={styles.label}
+              numberOfLines={1}>
               {stat.label}
             </ThemedText>
-            <View style={[styles.iconBadge, { backgroundColor: stat.iconBg }]}>
+            <View
+              style={[
+                styles.iconBadge,
+                { backgroundColor: isDark ? `${stat.iconColor}24` : stat.iconBg },
+              ]}>
               <Ionicons name={stat.icon} size={18} color={stat.iconColor} />
             </View>
           </View>
@@ -47,12 +62,11 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
     paddingHorizontal: 18,
     paddingVertical: 16,
-    shadowColor: '#0F172A',
+    shadowColor: '#000000',
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04,
+    shadowOpacity: 0.06,
     shadowRadius: 4,
     elevation: 1,
   },

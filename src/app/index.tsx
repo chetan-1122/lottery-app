@@ -12,12 +12,14 @@ import {
   SALES_TREND_14D,
   TOP_SELLING_GAMES,
 } from '@/data/dashboard';
+import { useTheme } from '@/hooks/use-theme';
 import { ThemedText } from '@/ui/themedText';
 import { ThemedView } from '@/ui/themedView';
 
 export default function HomeScreen() {
   const { width } = useWindowDimensions();
   const isWide = width >= 960;
+  const theme = useTheme();
 
   const [activeNavId, setActiveNavId] = useState('dashboard');
   const [searchQuery, setSearchQuery] = useState('');
@@ -66,7 +68,9 @@ export default function HomeScreen() {
           </View>
         </>
       ) : (
-        <ThemedView type="background" style={styles.sectionPlaceholder}>
+        <ThemedView
+          type="background"
+          style={[styles.sectionPlaceholder, { borderColor: theme.border }]}>
           <ThemedText type="smallBold" style={styles.placeholderTitle}>
             {activeSectionTitle}
           </ThemedText>
@@ -109,7 +113,6 @@ const styles = StyleSheet.create({
   sectionPlaceholder: {
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
     padding: 32,
     alignItems: 'center',
     justifyContent: 'center',

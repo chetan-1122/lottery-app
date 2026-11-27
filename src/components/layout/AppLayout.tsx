@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { STORE_ACCOUNTS, STORE_LOCATIONS } from '@/data/dashboard';
+import { useTheme } from '@/hooks/use-theme';
 import { StoreAccount, StoreLocation } from '@/types/dashboard';
 import { ThemedView } from '@/ui/themedView';
 
@@ -34,6 +35,7 @@ export function AppLayout({
 }: AppLayoutProps) {
   const { width } = useWindowDimensions();
   const isDesktop = width >= 900;
+  const theme = useTheme();
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
@@ -51,7 +53,9 @@ export function AppLayout({
   const handleChangeSearch = onChangeSearch ?? setInternalSearch;
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+    <SafeAreaView
+      style={[styles.safeArea, { backgroundColor: theme.background }]}
+      edges={['top', 'left', 'right']}>
       <ThemedView type="backgroundElement" style={styles.root}>
         {/* Persistent Desktop Sidebar */}
         {isDesktop && (
@@ -77,7 +81,7 @@ export function AppLayout({
           />
 
           <ScrollView
-            style={styles.contentScroll}
+            style={[styles.contentScroll, { backgroundColor: theme.backgroundElement }]}
             contentContainerStyle={[
               styles.contentContainer,
               !isDesktop && styles.contentContainerMobile,
@@ -139,12 +143,10 @@ export function AppLayout({
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
   },
   root: {
     flex: 1,
     flexDirection: 'row',
-    backgroundColor: '#F5F7FA',
   },
   mainColumn: {
     flex: 1,
@@ -170,14 +172,14 @@ const styles = StyleSheet.create({
   },
   drawerPanel: {
     width: 240,
-    shadowColor: '#0F172A',
+    shadowColor: '#000000',
     shadowOffset: { width: 4, height: 0 },
-    shadowOpacity: 0.16,
+    shadowOpacity: 0.25,
     shadowRadius: 16,
     elevation: 12,
   },
   drawerBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.35)',
+    backgroundColor: 'rgba(15, 23, 42, 0.45)',
   },
 });

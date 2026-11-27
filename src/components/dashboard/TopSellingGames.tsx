@@ -1,6 +1,7 @@
 import React from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
+import { useTheme } from '@/hooks/use-theme';
 import { TopSellingGame } from '@/types/dashboard';
 import { ThemedText } from '@/ui/themedText';
 import { ThemedView } from '@/ui/themedView';
@@ -11,8 +12,10 @@ interface TopSellingGamesProps {
 }
 
 export function TopSellingGames({ games, onPressAllGames }: TopSellingGamesProps) {
+  const theme = useTheme();
+
   return (
-    <ThemedView type="background" style={styles.card}>
+    <ThemedView type="background" style={[styles.card, { borderColor: theme.border }]}>
       <View style={styles.header}>
         <View>
           <ThemedText type="smallBold" style={styles.title}>
@@ -23,7 +26,7 @@ export function TopSellingGames({ games, onPressAllGames }: TopSellingGamesProps
           </ThemedText>
         </View>
         <Pressable onPress={onPressAllGames} hitSlop={8}>
-          <ThemedText type="linkPrimary" style={styles.link}>
+          <ThemedText type="linkPrimary" style={[styles.link, { color: theme.primary }]}>
             All games
           </ThemedText>
         </Pressable>
@@ -32,7 +35,7 @@ export function TopSellingGames({ games, onPressAllGames }: TopSellingGamesProps
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tableWrap}>
         <View style={styles.table}>
           {/* Table Header */}
-          <View style={styles.tableHeader}>
+          <View style={[styles.tableHeader, { borderBottomColor: theme.border }]}>
             <ThemedText type="small" themeColor="textSecondary" style={[styles.colHeader, styles.colGame]}>
               GAME
             </ThemedText>
@@ -62,7 +65,9 @@ export function TopSellingGames({ games, onPressAllGames }: TopSellingGamesProps
             </View>
           ) : (
             games.map((game) => (
-              <View key={game.id} style={styles.tableRow}>
+              <View
+                key={game.id}
+                style={[styles.tableRow, { borderBottomColor: theme.borderSubtle }]}>
                 <ThemedText type="smallBold" style={[styles.cellPrimary, styles.colGame]} numberOfLines={1}>
                   {game.name}
                 </ThemedText>
@@ -94,11 +99,10 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
     padding: 18,
-    shadowColor: '#0F172A',
+    shadowColor: '#000000',
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04,
+    shadowOpacity: 0.06,
     shadowRadius: 4,
     elevation: 1,
     minHeight: 340,
@@ -122,7 +126,6 @@ const styles = StyleSheet.create({
     fontSize: 12.5,
     lineHeight: 18,
     fontWeight: '600',
-    color: '#1D64D8',
   },
   tableWrap: {
     flexGrow: 1,
@@ -136,7 +139,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingBottom: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
   },
   colHeader: {
     fontSize: 11,
@@ -163,7 +165,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
   },
   cellPrimary: {
     fontSize: 13,

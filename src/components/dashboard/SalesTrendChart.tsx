@@ -3,6 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { LayoutChangeEvent, Pressable, StyleSheet, View } from 'react-native';
 import Svg, { Circle, Line, Path, Text as SvgText } from 'react-native-svg';
 
+import { useTheme } from '@/hooks/use-theme';
 import { SalesTrendPoint } from '@/types/dashboard';
 import { ThemedText } from '@/ui/themedText';
 import { ThemedView } from '@/ui/themedView';
@@ -43,6 +44,7 @@ function buildSmoothPath(points: { x: number; y: number }[]): string {
 }
 
 export function SalesTrendChart({ data }: SalesTrendChartProps) {
+  const theme = useTheme();
   const [range, setRange] = useState<RangeOption>('14D');
   const [chartWidth, setChartWidth] = useState(600);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
@@ -78,7 +80,7 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
   const showEveryNthLabel = chartWidth < 460 && visibleData.length > 7 ? 2 : 1;
 
   return (
-    <ThemedView type="background" style={styles.card}>
+    <ThemedView type="background" style={[styles.card, { borderColor: theme.border }]}>
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.titleWrap}>
@@ -86,7 +88,7 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
             <ThemedText type="smallBold" style={styles.title}>
               Lottery Sales Trend
             </ThemedText>
-            <Ionicons name="information-circle-outline" size={16} color="#94A3B8" />
+            <Ionicons name="information-circle-outline" size={16} color={theme.iconMuted} />
           </View>
           <ThemedText type="small" themeColor="textSecondary" style={styles.subtitle}>
             Instant vs online sales and payouts
@@ -129,7 +131,7 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
                   y1={y}
                   x2={chartWidth - PAD_RIGHT}
                   y2={y}
-                  stroke="#E2E8F0"
+                  stroke={theme.chartGrid}
                   strokeWidth={1}
                   strokeDasharray={tick === 0 ? undefined : '3,4'}
                 />
@@ -137,7 +139,7 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
                   x={PAD_LEFT - 8}
                   y={y + 4}
                   fontSize={10.5}
-                  fill="#64748B"
+                  fill={theme.chartLabel}
                   textAnchor="end">
                   {`$${tick}`}
                 </SvgText>
@@ -157,7 +159,7 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
           />
 
           {/* Instant (Scratch) smooth curve */}
-          <Path d={instantPath} fill="none" stroke="#3B6FD8" strokeWidth={2} />
+          <Path d={instantPath} fill="none" stroke="#3B82F6" strokeWidth={2} />
 
           {/* Selected vertical crosshair */}
           {selectedPoint && (
@@ -167,7 +169,7 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
                 y1={PAD_TOP}
                 x2={selectedPoint.x}
                 y2={PAD_TOP + innerH}
-                stroke="#94A3B8"
+                stroke={theme.iconMuted}
                 strokeWidth={1}
                 strokeDasharray="3,3"
               />
@@ -175,8 +177,8 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
                 cx={selectedPoint.x}
                 cy={selectedPoint.y}
                 r={5}
-                fill="#1D64D8"
-                stroke="#FFFFFF"
+                fill={theme.primary}
+                stroke={theme.background}
                 strokeWidth={2}
               />
             </>
@@ -190,7 +192,7 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
                 x={pt.x}
                 y={CHART_HEIGHT - 8}
                 fontSize={10.5}
-                fill={selectedIndex === idx ? '#1D64D8' : '#64748B'}
+                fill={selectedIndex === idx ? theme.primary : theme.chartLabel}
                 fontWeight={selectedIndex === idx ? '700' : '400'}
                 textAnchor="middle">
                 {pt.item.date}
@@ -213,13 +215,15 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
 
       {/* Interactive Tooltip Detail Card */}
       {selectedPoint && (
-        <ThemedView type="background" style={styles.tooltipCard}>
+        <ThemedView
+          type="background"
+          style={[styles.tooltipCard, { borderColor: theme.border }]}>
           <View style={styles.tooltipHeader}>
             <ThemedText type="smallBold" style={styles.tooltipDate}>
               {selectedPoint.item.fullDate}
             </ThemedText>
             <Pressable onPress={() => setSelectedIndex(null)} hitSlop={8}>
-              <Ionicons name="close" size={16} color="#94A3B8" />
+              <Ionicons name="close" size={16} color={theme.iconMuted} />
             </Pressable>
           </View>
 
@@ -229,7 +233,7 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
 
           <View style={styles.tooltipRow}>
             <View style={styles.tooltipLegendLeft}>
-              <View style={[styles.dot, { backgroundColor: '#3B6FD8' }]} />
+              <View style={[styles.dot, { backgroundColor: '#3B82F6' }]} />
               <ThemedText type="small" themeColor="textSecondary" style={styles.tooltipLabel}>
                 Instant (Scratch)
               </ThemedText>
@@ -263,7 +267,7 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
             </ThemedText>
           </View>
 
-          <View style={styles.tooltipDivider} />
+          <View style={[styles.tooltipDivider, { backgroundColor: theme.borderSubtle }]} />
 
           <View style={styles.tooltipRow}>
             <ThemedText type="small" themeColor="textSecondary" style={styles.tooltipLabel}>
@@ -278,7 +282,7 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
             <ThemedText type="small" themeColor="textSecondary" style={styles.tooltipLabel}>
               Net lottery cash
             </ThemedText>
-            <ThemedText type="smallBold" style={[styles.tooltipAmount, { color: '#1D64D8' }]}>
+            <ThemedText type="smallBold" style={[styles.tooltipAmount, { color: theme.primary }]}>
               ${selectedPoint.item.netCash.toFixed(2)}
             </ThemedText>
           </View>
@@ -291,7 +295,9 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
           </ThemedText>
 
           <View style={styles.inventoryRow}>
-            <ThemedView type="backgroundElement" style={styles.inventoryBox}>
+            <ThemedView
+              type="backgroundElement"
+              style={[styles.inventoryBox, { borderColor: theme.borderSubtle }]}>
               <ThemedText type="smallBold" style={styles.inventoryVal}>
                 {selectedPoint.item.activeBooks}
               </ThemedText>
@@ -299,7 +305,9 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
                 Active books
               </ThemedText>
             </ThemedView>
-            <ThemedView type="backgroundElement" style={styles.inventoryBox}>
+            <ThemedView
+              type="backgroundElement"
+              style={[styles.inventoryBox, { borderColor: theme.borderSubtle }]}>
               <ThemedText type="smallBold" style={styles.inventoryVal}>
                 {selectedPoint.item.ticketsInStock.toLocaleString()}
               </ThemedText>
@@ -314,7 +322,7 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
       {/* Legend */}
       <View style={styles.legendRow}>
         <View style={styles.legendItem}>
-          <View style={[styles.dot, { backgroundColor: '#3B6FD8' }]} />
+          <View style={[styles.dot, { backgroundColor: '#3B82F6' }]} />
           <ThemedText type="small" themeColor="textSecondary" style={styles.legendText}>
             Instant (Scratch)
           </ThemedText>
@@ -340,11 +348,10 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
     padding: 18,
-    shadowColor: '#0F172A',
+    shadowColor: '#000000',
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04,
+    shadowOpacity: 0.06,
     shadowRadius: 4,
     elevation: 1,
   },
@@ -412,12 +419,11 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
     padding: 14,
     maxWidth: 260,
-    shadowColor: '#0F172A',
+    shadowColor: '#000000',
     shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.08,
+    shadowOpacity: 0.14,
     shadowRadius: 16,
     elevation: 4,
   },
@@ -458,7 +464,6 @@ const styles = StyleSheet.create({
   },
   tooltipDivider: {
     height: 1,
-    backgroundColor: '#F1F5F9',
     marginVertical: 6,
   },
   inventoryRow: {
@@ -469,7 +474,6 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#EEF2F6',
     padding: 8,
   },
   inventoryVal: {

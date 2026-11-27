@@ -4,6 +4,7 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import Svg, { Defs, LinearGradient, Path, Stop } from 'react-native-svg';
 
 import { SIDEBAR_FOOTER_ITEM, SIDEBAR_SECTIONS } from '@/constants/navigation';
+import { useTheme } from '@/hooks/use-theme';
 import { StoreAccount, StoreLocation } from '@/types/dashboard';
 import { ThemedText } from '@/ui/themedText';
 import { ThemedView } from '@/ui/themedView';
@@ -58,6 +59,7 @@ export function Sidebar({
   isMobileDrawer = false,
   onCloseMobileDrawer,
 }: SidebarProps) {
+  const theme = useTheme();
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
 
   const toggleGroup = (groupId: string) => {
@@ -67,7 +69,11 @@ export function Sidebar({
   return (
     <ThemedView
       type="background"
-      style={[styles.container, collapsed && !isMobileDrawer && styles.containerCollapsed]}>
+      style={[
+        styles.container,
+        { borderRightColor: theme.border },
+        collapsed && !isMobileDrawer && styles.containerCollapsed,
+      ]}>
       {/* Brand Header */}
       <View style={[styles.brandRow, collapsed && !isMobileDrawer && styles.brandRowCollapsed]}>
         <Pressable
@@ -83,17 +89,17 @@ export function Sidebar({
 
         {isMobileDrawer ? (
           <Pressable onPress={onCloseMobileDrawer} style={styles.collapseBtn} hitSlop={8}>
-            <Ionicons name="close" size={20} color="#64748B" />
+            <Ionicons name="close" size={20} color={theme.iconMuted} />
           </Pressable>
         ) : (
           !collapsed &&
           onToggleCollapse && (
             <Pressable onPress={onToggleCollapse} style={styles.collapseBtn} hitSlop={8}>
-              <Ionicons name="chevron-back-outline" size={16} color="#64748B" />
+              <Ionicons name="chevron-back-outline" size={16} color={theme.iconMuted} />
               <Ionicons
                 name="chevron-back-outline"
                 size={16}
-                color="#64748B"
+                color={theme.iconMuted}
                 style={{ marginLeft: -10 }}
               />
             </Pressable>
@@ -104,10 +110,14 @@ export function Sidebar({
       {/* Store Switcher Tile */}
       <View style={styles.storeSection}>
         <Pressable
-          style={[styles.storeCard, collapsed && !isMobileDrawer && styles.storeCardCollapsed]}
+          style={[
+            styles.storeCard,
+            { backgroundColor: theme.inputBackground, borderColor: theme.borderSubtle },
+            collapsed && !isMobileDrawer && styles.storeCardCollapsed,
+          ]}
           onPress={onOpenStoreSwitcher}>
-          <View style={styles.storeAvatar}>
-            <ThemedText type="smallBold" style={styles.storeAvatarText}>
+          <View style={[styles.storeAvatar, { backgroundColor: theme.primarySoft }]}>
+            <ThemedText type="smallBold" style={[styles.storeAvatarText, { color: theme.primary }]}>
               {selectedLocation.initials}
             </ThemedText>
           </View>
@@ -117,11 +127,15 @@ export function Sidebar({
                 <ThemedText type="smallBold" style={styles.storeName} numberOfLines={1}>
                   {selectedLocation.name}
                 </ThemedText>
-                <ThemedText type="small" themeColor="textSecondary" style={styles.storeTenant} numberOfLines={1}>
+                <ThemedText
+                  type="small"
+                  themeColor="textSecondary"
+                  style={styles.storeTenant}
+                  numberOfLines={1}>
                   {selectedAccount.name}
                 </ThemedText>
               </View>
-              <Ionicons name="swap-vertical-outline" size={16} color="#94A3B8" />
+              <Ionicons name="swap-vertical-outline" size={16} color={theme.iconMuted} />
             </>
           )}
         </Pressable>
@@ -153,7 +167,7 @@ export function Sidebar({
                     style={({ pressed }) => [
                       styles.navItem,
                       collapsed && !isMobileDrawer && styles.navItemCollapsed,
-                      isActive && !hasChildren && styles.navItemActive,
+                      isActive && !hasChildren && { backgroundColor: theme.primarySoft },
                       pressed && styles.navItemPressed,
                     ]}
                     onPress={() => {
@@ -174,13 +188,13 @@ export function Sidebar({
                     <Ionicons
                       name={item.icon}
                       size={18}
-                      color={isActive ? '#1D64D8' : '#475569'}
+                      color={isActive ? theme.primary : theme.iconMuted}
                     />
                     {(!collapsed || isMobileDrawer) && (
                       <>
                         <ThemedText
                           type={isActive ? 'smallBold' : 'small'}
-                          style={[styles.navLabel, isActive && styles.navLabelActive]}
+                          style={[styles.navLabel, isActive && { color: theme.primary }]}
                           numberOfLines={1}>
                           {item.label}
                         </ThemedText>
@@ -188,7 +202,7 @@ export function Sidebar({
                           <Ionicons
                             name={isExpanded ? 'chevron-down' : 'chevron-forward'}
                             size={14}
-                            color="#94A3B8"
+                            color={theme.iconMuted}
                           />
                         )}
                       </>
@@ -205,7 +219,7 @@ export function Sidebar({
                             key={child.id}
                             style={({ pressed }) => [
                               styles.subItem,
-                              childActive && styles.subItemActive,
+                              childActive && { backgroundColor: theme.primarySoft },
                               pressed && styles.navItemPressed,
                             ]}
                             onPress={() => {
@@ -214,11 +228,16 @@ export function Sidebar({
                                 onCloseMobileDrawer();
                               }
                             }}>
-                            <View style={[styles.subDot, childActive && styles.subDotActive]} />
+                            <View
+                              style={[
+                                styles.subDot,
+                                { backgroundColor: childActive ? theme.primary : theme.iconMuted },
+                              ]}
+                            />
                             <ThemedText
                               type={childActive ? 'smallBold' : 'small'}
                               themeColor={childActive ? undefined : 'textSecondary'}
-                              style={[styles.subLabel, childActive && styles.subLabelActive]}
+                              style={[styles.subLabel, childActive && { color: theme.primary }]}
                               numberOfLines={1}>
                               {child.label}
                             </ThemedText>
@@ -235,12 +254,12 @@ export function Sidebar({
       </ScrollView>
 
       {/* Footer Settings */}
-      <View style={styles.footer}>
+      <View style={[styles.footer, { borderTopColor: theme.borderSubtle }]}>
         <Pressable
           style={({ pressed }) => [
             styles.navItem,
             collapsed && !isMobileDrawer && styles.navItemCollapsed,
-            activeItemId === SIDEBAR_FOOTER_ITEM.id && styles.navItemActive,
+            activeItemId === SIDEBAR_FOOTER_ITEM.id && { backgroundColor: theme.primarySoft },
             pressed && styles.navItemPressed,
           ]}
           onPress={() => {
@@ -252,14 +271,14 @@ export function Sidebar({
           <Ionicons
             name={SIDEBAR_FOOTER_ITEM.icon}
             size={18}
-            color={activeItemId === SIDEBAR_FOOTER_ITEM.id ? '#1D64D8' : '#475569'}
+            color={activeItemId === SIDEBAR_FOOTER_ITEM.id ? theme.primary : theme.iconMuted}
           />
           {(!collapsed || isMobileDrawer) && (
             <ThemedText
               type={activeItemId === SIDEBAR_FOOTER_ITEM.id ? 'smallBold' : 'small'}
               style={[
                 styles.navLabel,
-                activeItemId === SIDEBAR_FOOTER_ITEM.id && styles.navLabelActive,
+                activeItemId === SIDEBAR_FOOTER_ITEM.id && { color: theme.primary },
               ]}>
               {SIDEBAR_FOOTER_ITEM.label}
             </ThemedText>
@@ -274,7 +293,6 @@ const styles = StyleSheet.create({
   container: {
     width: 240,
     borderRightWidth: 1,
-    borderRightColor: '#E2E8F0',
     flexDirection: 'column',
     height: '100%',
   },
@@ -320,9 +338,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 8,
     borderRadius: 10,
-    backgroundColor: '#F8FAFC',
     borderWidth: 1,
-    borderColor: '#EEF2F6',
   },
   storeCardCollapsed: {
     justifyContent: 'center',
@@ -334,14 +350,12 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 9,
-    backgroundColor: '#EAF2FF',
     alignItems: 'center',
     justifyContent: 'center',
   },
   storeAvatarText: {
     fontSize: 12,
     lineHeight: 16,
-    color: '#1D64D8',
   },
   storeInfo: {
     flex: 1,
@@ -387,9 +401,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 0,
   },
-  navItemActive: {
-    backgroundColor: '#EAF2FF',
-  },
   navItemPressed: {
     opacity: 0.75,
   },
@@ -397,9 +408,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 13.5,
     lineHeight: 18,
-  },
-  navLabelActive: {
-    color: '#1D64D8',
   },
   subList: {
     paddingLeft: 26,
@@ -414,28 +422,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 8,
   },
-  subItemActive: {
-    backgroundColor: '#F1F5F9',
-  },
   subDot: {
     width: 4,
     height: 4,
     borderRadius: 2,
-    backgroundColor: '#94A3B8',
-  },
-  subDotActive: {
-    backgroundColor: '#1D64D8',
   },
   subLabel: {
     fontSize: 13,
     lineHeight: 18,
   },
-  subLabelActive: {
-    color: '#1D64D8',
-  },
   footer: {
     borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
     paddingHorizontal: 12,
     paddingVertical: 10,
   },
