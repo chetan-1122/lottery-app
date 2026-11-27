@@ -1,98 +1,136 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useMemo, useState } from 'react';
+import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+import { AlertsPanel } from '@/components/dashboard/AlertsPanel';
+import { SalesTrendChart } from '@/components/dashboard/SalesTrendChart';
+import { StatCards } from '@/components/dashboard/StatCards';
+import { TopSellingGames } from '@/components/dashboard/TopSellingGames';
+import { AppLayout } from '@/components/layout/AppLayout';
+import {
+  DASHBOARD_ALERTS,
+  KPI_STATS,
+  SALES_TREND_14D,
+  TOP_SELLING_GAMES,
+} from '@/data/dashboard';
 
 export default function HomeScreen() {
+  const { width } = useWindowDimensions();
+  const isWide = width >= 960;
+
+  const [activeNavId, setActiveNavId] = useState('dashboard');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredAlerts = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return DASHBOARD_ALERTS;
+    return DASHBOARD_ALERTS.filter(
+      (a) =>
+        a.title.toLowerCase().includes(q) ||
+        a.register.toLowerCase().includes(q) ||
+        a.cashier.toLowerCase().includes(q)
+    );
+  }, [searchQuery]);
+
+  const activeSectionTitle = activeNavId
+    .split('-')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
+
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+    <AppLayout
+      activeNavId={activeNavId}
+      onSelectNav={setActiveNavId}
+      searchQuery={searchQuery}
+      onChangeSearch={setSearchQuery}>
+      {activeNavId === 'dashboard' ? (
+        <>
+          {/* Row 1: KPI Stat Cards */}
+          <StatCards stats={KPI_STATS} />
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+          {/* Row 2: Lottery Sales Trend Chart */}
+          <SalesTrendChart data={SALES_TREND_14D} />
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+          {/* Row 3: Top Selling Games + Alerts */}
+          <View style={[styles.bottomRow, !isWide && styles.bottomRowStacked]}>
+            <View style={isWide ? styles.leftCol : styles.fullCol}>
+              <TopSellingGames
+                games={TOP_SELLING_GAMES}
+                onPressAllGames={() => setActiveNavId('lottery-games')}
+              />
+            </View>
+            <View style={isWide ? styles.rightCol : styles.fullCol}>
+              <AlertsPanel alerts={filteredAlerts} />
+            </View>
+          </View>
+        </>
+      ) : (
+        <View style={styles.sectionPlaceholder}>
+          <Text style={styles.placeholderTitle}>{activeSectionTitle}</Text>
+          <Text style={styles.placeholderSubtitle}>
+            This section is ready to be connected to your backend data.
+          </Text>
+          <Pressable
+            style={styles.backBtn}
+            onPress={() => setActiveNavId('dashboard')}>
+            <Text style={styles.backBtnText}>Back to Dashboard</Text>
+          </Pressable>
+        </View>
+      )}
+    </AppLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
+  bottomRow: {
     flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 16,
   },
-  safeArea: {
+  bottomRowStacked: {
+    flexDirection: 'column',
+  },
+  leftCol: {
+    flex: 1.9,
+    minWidth: 0,
+  },
+  rightCol: {
     flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+    minWidth: 280,
   },
-  heroSection: {
+  fullCol: {
+    width: '100%',
+  },
+  sectionPlaceholder: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    padding: 32,
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+    minHeight: 320,
+    gap: 10,
   },
-  title: {
+  placeholderTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#0F172A',
+  },
+  placeholderSubtitle: {
+    fontSize: 13.5,
+    color: '#64748B',
     textAlign: 'center',
   },
-  code: {
-    textTransform: 'uppercase',
+  backBtn: {
+    marginTop: 8,
+    backgroundColor: '#1D64D8',
+    paddingHorizontal: 16,
+    paddingVertical: 9,
+    borderRadius: 9,
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  backBtnText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#FFFFFF',
   },
 });
