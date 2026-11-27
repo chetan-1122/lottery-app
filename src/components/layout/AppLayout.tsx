@@ -11,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { STORE_ACCOUNTS, STORE_LOCATIONS } from '@/data/dashboard';
 import { StoreAccount, StoreLocation } from '@/types/dashboard';
+import { ThemedView } from '@/ui/themedView';
 
 import { Sidebar } from './Sidebar';
 import { StoreSwitcherModal } from './StoreSwitcherModal';
@@ -51,7 +52,7 @@ export function AppLayout({
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
-      <View style={styles.root}>
+      <ThemedView type="backgroundElement" style={styles.root}>
         {/* Persistent Desktop Sidebar */}
         {isDesktop && (
           <Sidebar
@@ -94,7 +95,7 @@ export function AppLayout({
             animationType="fade"
             onRequestClose={() => setMobileDrawerOpen(false)}>
             <View style={styles.drawerOverlay}>
-              <View style={styles.drawerPanel}>
+              <ThemedView type="background" style={styles.drawerPanel}>
                 <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
                   <Sidebar
                     collapsed={false}
@@ -110,7 +111,7 @@ export function AppLayout({
                     onCloseMobileDrawer={() => setMobileDrawerOpen(false)}
                   />
                 </SafeAreaView>
-              </View>
+              </ThemedView>
               <Pressable
                 style={styles.drawerBackdrop}
                 onPress={() => setMobileDrawerOpen(false)}
@@ -130,7 +131,7 @@ export function AppLayout({
           onSelectAccount={setSelectedAccount}
           onSelectLocation={setSelectedLocation}
         />
-      </View>
+      </ThemedView>
     </SafeAreaView>
   );
 }
@@ -169,7 +170,6 @@ const styles = StyleSheet.create({
   },
   drawerPanel: {
     width: 240,
-    backgroundColor: '#FFFFFF',
     shadowColor: '#0F172A',
     shadowOffset: { width: 4, height: 0 },
     shadowOpacity: 0.16,

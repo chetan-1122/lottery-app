@@ -1,7 +1,9 @@
 import React from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { TopSellingGame } from '@/types/dashboard';
+import { ThemedText } from '@/ui/themedText';
+import { ThemedView } from '@/ui/themedView';
 
 interface TopSellingGamesProps {
   games: TopSellingGame[];
@@ -10,14 +12,20 @@ interface TopSellingGamesProps {
 
 export function TopSellingGames({ games, onPressAllGames }: TopSellingGamesProps) {
   return (
-    <View style={styles.card}>
+    <ThemedView type="background" style={styles.card}>
       <View style={styles.header}>
         <View>
-          <Text style={styles.title}>Top Selling Games</Text>
-          <Text style={styles.subtitle}>Instant games ranked by today&apos;s revenue</Text>
+          <ThemedText type="smallBold" style={styles.title}>
+            Top Selling Games
+          </ThemedText>
+          <ThemedText type="small" themeColor="textSecondary" style={styles.subtitle}>
+            Instant games ranked by today&apos;s revenue
+          </ThemedText>
         </View>
         <Pressable onPress={onPressAllGames} hitSlop={8}>
-          <Text style={styles.link}>All games</Text>
+          <ThemedText type="linkPrimary" style={styles.link}>
+            All games
+          </ThemedText>
         </Pressable>
       </View>
 
@@ -25,44 +33,65 @@ export function TopSellingGames({ games, onPressAllGames }: TopSellingGamesProps
         <View style={styles.table}>
           {/* Table Header */}
           <View style={styles.tableHeader}>
-            <Text style={[styles.colHeader, styles.colGame]}>GAME</Text>
-            <Text style={[styles.colHeader, styles.colNum]}>PRICE</Text>
-            <Text style={[styles.colHeader, styles.colNum]}>SOLD</Text>
-            <Text style={[styles.colHeader, styles.colNum]}>REVENUE</Text>
-            <Text style={[styles.colHeader, styles.colSellThrough]}>SELL-THROUGH</Text>
+            <ThemedText type="small" themeColor="textSecondary" style={[styles.colHeader, styles.colGame]}>
+              GAME
+            </ThemedText>
+            <ThemedText type="small" themeColor="textSecondary" style={[styles.colHeader, styles.colNum]}>
+              PRICE
+            </ThemedText>
+            <ThemedText type="small" themeColor="textSecondary" style={[styles.colHeader, styles.colNum]}>
+              SOLD
+            </ThemedText>
+            <ThemedText type="small" themeColor="textSecondary" style={[styles.colHeader, styles.colNum]}>
+              REVENUE
+            </ThemedText>
+            <ThemedText
+              type="small"
+              themeColor="textSecondary"
+              style={[styles.colHeader, styles.colSellThrough]}>
+              SELL-THROUGH
+            </ThemedText>
           </View>
 
           {/* Table Body */}
           {games.length === 0 ? (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyText}>No instant game sales recorded today</Text>
+              <ThemedText type="small" themeColor="textSecondary" style={styles.emptyText}>
+                No instant game sales recorded today
+              </ThemedText>
             </View>
           ) : (
             games.map((game) => (
               <View key={game.id} style={styles.tableRow}>
-                <Text style={[styles.cellPrimary, styles.colGame]} numberOfLines={1}>
+                <ThemedText type="smallBold" style={[styles.cellPrimary, styles.colGame]} numberOfLines={1}>
                   {game.name}
-                </Text>
-                <Text style={[styles.cellText, styles.colNum]}>${game.price.toFixed(2)}</Text>
-                <Text style={[styles.cellText, styles.colNum]}>{game.sold}</Text>
-                <Text style={[styles.cellPrimary, styles.colNum]}>
+                </ThemedText>
+                <ThemedText type="small" themeColor="textSecondary" style={[styles.cellText, styles.colNum]}>
+                  ${game.price.toFixed(2)}
+                </ThemedText>
+                <ThemedText type="small" themeColor="textSecondary" style={[styles.cellText, styles.colNum]}>
+                  {game.sold}
+                </ThemedText>
+                <ThemedText type="smallBold" style={[styles.cellPrimary, styles.colNum]}>
                   ${game.revenue.toFixed(2)}
-                </Text>
-                <Text style={[styles.cellText, styles.colSellThrough]}>
+                </ThemedText>
+                <ThemedText
+                  type="small"
+                  themeColor="textSecondary"
+                  style={[styles.cellText, styles.colSellThrough]}>
                   {game.sellThrough}%
-                </Text>
+                </ThemedText>
               </View>
             ))
           )}
         </View>
       </ScrollView>
-    </View>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#FFFFFF',
     borderRadius: 14,
     borderWidth: 1,
     borderColor: '#E2E8F0',
@@ -82,16 +111,16 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 15,
-    fontWeight: '700',
-    color: '#0F172A',
+    lineHeight: 20,
   },
   subtitle: {
     fontSize: 12,
-    color: '#64748B',
+    lineHeight: 17,
     marginTop: 2,
   },
   link: {
     fontSize: 12.5,
+    lineHeight: 18,
     fontWeight: '600',
     color: '#1D64D8',
   },
@@ -111,9 +140,9 @@ const styles = StyleSheet.create({
   },
   colHeader: {
     fontSize: 11,
+    lineHeight: 15,
     fontWeight: '600',
     letterSpacing: 0.5,
-    color: '#64748B',
   },
   colGame: {
     flex: 2,
@@ -138,12 +167,11 @@ const styles = StyleSheet.create({
   },
   cellPrimary: {
     fontSize: 13,
-    fontWeight: '600',
-    color: '#0F172A',
+    lineHeight: 18,
   },
   cellText: {
     fontSize: 13,
-    color: '#475569',
+    lineHeight: 18,
   },
   emptyState: {
     flex: 1,
@@ -153,6 +181,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 13,
-    color: '#94A3B8',
+    lineHeight: 18,
+    opacity: 0.75,
   },
 });

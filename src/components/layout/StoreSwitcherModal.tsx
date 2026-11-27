@@ -1,8 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Modal, Pressable, StyleSheet, View } from 'react-native';
 
 import { StoreAccount, StoreLocation } from '@/types/dashboard';
+import { ThemedText } from '@/ui/themedText';
+import { ThemedView } from '@/ui/themedView';
 
 interface StoreSwitcherModalProps {
   visible: boolean;
@@ -33,108 +35,125 @@ export function StoreSwitcherModal({
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <Pressable style={styles.backdrop} onPress={onClose}>
-        <Pressable style={styles.card} onPress={(e) => e.stopPropagation()}>
-          <View style={styles.header}>
-            <Text style={styles.title}>Switch store</Text>
-            <Pressable onPress={onClose} hitSlop={8} style={styles.closeBtn}>
-              <Ionicons name="close" size={18} color="#64748B" />
-            </Pressable>
-          </View>
+        <Pressable style={styles.cardWrap} onPress={(e) => e.stopPropagation()}>
+          <ThemedView type="background" style={styles.card}>
+            <View style={styles.header}>
+              <ThemedText type="smallBold" style={styles.title}>
+                Switch store
+              </ThemedText>
+              <Pressable onPress={onClose} hitSlop={8} style={styles.closeBtn}>
+                <Ionicons name="close" size={18} color="#64748B" />
+              </Pressable>
+            </View>
 
-          <View style={styles.divider} />
+            <View style={styles.divider} />
 
-          <View style={styles.body}>
-            <Text style={styles.fieldLabel}>ACCOUNT</Text>
-            <Pressable
-              style={styles.selectBox}
-              onPress={() => {
-                setAccountDropdownOpen((prev) => !prev);
-                setLocationDropdownOpen(false);
-              }}>
-              <View style={styles.selectLeft}>
-                <Ionicons name="business-outline" size={16} color="#2563EB" />
-                <Text style={styles.selectText}>{selectedAccount.name}</Text>
-              </View>
-              <Ionicons
-                name={accountDropdownOpen ? 'chevron-up' : 'chevron-down'}
-                size={16}
-                color="#64748B"
-              />
-            </Pressable>
+            <View style={styles.body}>
+              <ThemedText type="smallBold" themeColor="textSecondary" style={styles.fieldLabel}>
+                ACCOUNT
+              </ThemedText>
+              <Pressable
+                style={styles.selectBox}
+                onPress={() => {
+                  setAccountDropdownOpen((prev) => !prev);
+                  setLocationDropdownOpen(false);
+                }}>
+                <View style={styles.selectLeft}>
+                  <Ionicons name="business-outline" size={16} color="#2563EB" />
+                  <ThemedText type="small" style={styles.selectText}>
+                    {selectedAccount.name}
+                  </ThemedText>
+                </View>
+                <Ionicons
+                  name={accountDropdownOpen ? 'chevron-up' : 'chevron-down'}
+                  size={16}
+                  color="#64748B"
+                />
+              </Pressable>
 
-            {accountDropdownOpen && (
-              <View style={styles.dropdownMenu}>
-                {accounts.map((acc) => {
-                  const isActive = acc.id === selectedAccount.id;
-                  return (
-                    <Pressable
-                      key={acc.id}
-                      style={[styles.dropdownItem, isActive && styles.dropdownItemActive]}
-                      onPress={() => {
-                        onSelectAccount(acc);
-                        const firstLoc = locations.find((l) => l.accountId === acc.id);
-                        if (firstLoc) onSelectLocation(firstLoc);
-                        setAccountDropdownOpen(false);
-                      }}>
-                      <Text
-                        style={[
-                          styles.dropdownItemText,
-                          isActive && styles.dropdownItemTextActive,
-                        ]}>
-                        {acc.name}
-                      </Text>
-                      {isActive && <Ionicons name="checkmark" size={15} color="#2563EB" />}
-                    </Pressable>
-                  );
-                })}
-              </View>
-            )}
+              {accountDropdownOpen && (
+                <ThemedView type="background" style={styles.dropdownMenu}>
+                  {accounts.map((acc) => {
+                    const isActive = acc.id === selectedAccount.id;
+                    return (
+                      <Pressable
+                        key={acc.id}
+                        style={[styles.dropdownItem, isActive && styles.dropdownItemActive]}
+                        onPress={() => {
+                          onSelectAccount(acc);
+                          const firstLoc = locations.find((l) => l.accountId === acc.id);
+                          if (firstLoc) onSelectLocation(firstLoc);
+                          setAccountDropdownOpen(false);
+                        }}>
+                        <ThemedText
+                          type={isActive ? 'smallBold' : 'small'}
+                          style={[
+                            styles.dropdownItemText,
+                            isActive && styles.dropdownItemTextActive,
+                          ]}>
+                          {acc.name}
+                        </ThemedText>
+                        {isActive && <Ionicons name="checkmark" size={15} color="#2563EB" />}
+                      </Pressable>
+                    );
+                  })}
+                </ThemedView>
+              )}
 
-            <Text style={[styles.fieldLabel, { marginTop: 14 }]}>LOCATION</Text>
-            <Pressable
-              style={styles.selectBox}
-              onPress={() => {
-                setLocationDropdownOpen((prev) => !prev);
-                setAccountDropdownOpen(false);
-              }}>
-              <View style={styles.selectLeft}>
-                <Ionicons name="location-outline" size={16} color="#7C3AED" />
-                <Text style={styles.selectText}>{selectedLocation.name}</Text>
-              </View>
-              <Ionicons
-                name={locationDropdownOpen ? 'chevron-up' : 'chevron-down'}
-                size={16}
-                color="#64748B"
-              />
-            </Pressable>
+              <ThemedText
+                type="smallBold"
+                themeColor="textSecondary"
+                style={[styles.fieldLabel, { marginTop: 14 }]}>
+                LOCATION
+              </ThemedText>
+              <Pressable
+                style={styles.selectBox}
+                onPress={() => {
+                  setLocationDropdownOpen((prev) => !prev);
+                  setAccountDropdownOpen(false);
+                }}>
+                <View style={styles.selectLeft}>
+                  <Ionicons name="location-outline" size={16} color="#7C3AED" />
+                  <ThemedText type="small" style={styles.selectText}>
+                    {selectedLocation.name}
+                  </ThemedText>
+                </View>
+                <Ionicons
+                  name={locationDropdownOpen ? 'chevron-up' : 'chevron-down'}
+                  size={16}
+                  color="#64748B"
+                />
+              </Pressable>
 
-            {locationDropdownOpen && (
-              <View style={styles.dropdownMenu}>
-                {filteredLocations.map((loc) => {
-                  const isActive = loc.id === selectedLocation.id;
-                  return (
-                    <Pressable
-                      key={loc.id}
-                      style={[styles.dropdownItem, isActive && styles.dropdownItemActive]}
-                      onPress={() => {
-                        onSelectLocation(loc);
-                        setLocationDropdownOpen(false);
-                        onClose();
-                      }}>
-                      <Text
-                        style={[
-                          styles.dropdownItemText,
-                          isActive && styles.dropdownItemTextActive,
-                        ]}>
-                        {loc.name}
-                      </Text>
-                      {isActive && <Ionicons name="checkmark" size={15} color="#2563EB" />}
-                    </Pressable>
-                  );
-                })}
-              </View>
-            )}
-          </View>
+              {locationDropdownOpen && (
+                <ThemedView type="background" style={styles.dropdownMenu}>
+                  {filteredLocations.map((loc) => {
+                    const isActive = loc.id === selectedLocation.id;
+                    return (
+                      <Pressable
+                        key={loc.id}
+                        style={[styles.dropdownItem, isActive && styles.dropdownItemActive]}
+                        onPress={() => {
+                          onSelectLocation(loc);
+                          setLocationDropdownOpen(false);
+                          onClose();
+                        }}>
+                        <ThemedText
+                          type={isActive ? 'smallBold' : 'small'}
+                          style={[
+                            styles.dropdownItemText,
+                            isActive && styles.dropdownItemTextActive,
+                          ]}>
+                          {loc.name}
+                        </ThemedText>
+                        {isActive && <Ionicons name="checkmark" size={15} color="#2563EB" />}
+                      </Pressable>
+                    );
+                  })}
+                </ThemedView>
+              )}
+            </View>
+          </ThemedView>
         </Pressable>
       </Pressable>
     </Modal>
@@ -149,10 +168,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
   },
-  card: {
+  cardWrap: {
     width: '100%',
     maxWidth: 300,
-    backgroundColor: '#FFFFFF',
+  },
+  card: {
     borderRadius: 14,
     borderWidth: 1,
     borderColor: '#E2E8F0',
@@ -172,8 +192,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#0F172A',
+    lineHeight: 20,
   },
   closeBtn: {
     padding: 2,
@@ -187,9 +206,8 @@ const styles = StyleSheet.create({
   },
   fieldLabel: {
     fontSize: 10,
-    fontWeight: '700',
+    lineHeight: 14,
     letterSpacing: 0.8,
-    color: '#64748B',
     marginBottom: 6,
   },
   selectBox: {
@@ -210,15 +228,13 @@ const styles = StyleSheet.create({
   },
   selectText: {
     fontSize: 13,
-    fontWeight: '500',
-    color: '#0F172A',
+    lineHeight: 18,
   },
   dropdownMenu: {
     marginTop: 6,
     borderWidth: 1,
     borderColor: '#E2E8F0',
     borderRadius: 10,
-    backgroundColor: '#FFFFFF',
     overflow: 'hidden',
   },
   dropdownItem: {
@@ -233,10 +249,9 @@ const styles = StyleSheet.create({
   },
   dropdownItemText: {
     fontSize: 13,
-    color: '#334155',
+    lineHeight: 18,
   },
   dropdownItemTextActive: {
     color: '#1D64D8',
-    fontWeight: '600',
   },
 });

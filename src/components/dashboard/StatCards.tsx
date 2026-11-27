@@ -1,8 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { StyleSheet, useWindowDimensions, View } from 'react-native';
 
 import { KpiStat } from '@/types/dashboard';
+import { ThemedText } from '@/ui/themedText';
+import { ThemedView } from '@/ui/themedView';
 
 interface StatCardsProps {
   stats: KpiStat[];
@@ -15,19 +17,22 @@ export function StatCards({ stats }: StatCardsProps) {
   return (
     <View style={styles.grid}>
       {stats.map((stat) => (
-        <View
+        <ThemedView
           key={stat.id}
+          type="background"
           style={[styles.card, isWide ? styles.cardQuarter : styles.cardHalf]}>
           <View style={styles.topRow}>
-            <Text style={styles.label} numberOfLines={1}>
+            <ThemedText type="small" themeColor="textSecondary" style={styles.label} numberOfLines={1}>
               {stat.label}
-            </Text>
+            </ThemedText>
             <View style={[styles.iconBadge, { backgroundColor: stat.iconBg }]}>
               <Ionicons name={stat.icon} size={18} color={stat.iconColor} />
             </View>
           </View>
-          <Text style={styles.value}>{stat.value}</Text>
-        </View>
+          <ThemedText type="subtitle" style={styles.value}>
+            {stat.value}
+          </ThemedText>
+        </ThemedView>
       ))}
     </View>
   );
@@ -40,7 +45,6 @@ const styles = StyleSheet.create({
     gap: 14,
   },
   card: {
-    backgroundColor: '#FFFFFF',
     borderRadius: 14,
     borderWidth: 1,
     borderColor: '#E2E8F0',
@@ -68,8 +72,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 13,
-    fontWeight: '500',
-    color: '#475569',
+    lineHeight: 18,
     flex: 1,
     marginRight: 8,
   },
@@ -82,8 +85,8 @@ const styles = StyleSheet.create({
   },
   value: {
     fontSize: 28,
+    lineHeight: 34,
     fontWeight: '700',
-    color: '#0F172A',
     letterSpacing: -0.5,
   },
 });

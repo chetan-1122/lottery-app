@@ -1,8 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { AlertItem } from '@/types/dashboard';
+import { ThemedText } from '@/ui/themedText';
+import { ThemedView } from '@/ui/themedView';
 
 interface AlertsPanelProps {
   alerts: AlertItem[];
@@ -10,14 +12,20 @@ interface AlertsPanelProps {
 
 export function AlertsPanel({ alerts }: AlertsPanelProps) {
   return (
-    <View style={styles.card}>
+    <ThemedView type="background" style={styles.card}>
       <View style={styles.header}>
         <View>
-          <Text style={styles.title}>Alerts</Text>
-          <Text style={styles.subtitle}>Items that need attention</Text>
+          <ThemedText type="smallBold" style={styles.title}>
+            Alerts
+          </ThemedText>
+          <ThemedText type="small" themeColor="textSecondary" style={styles.subtitle}>
+            Items that need attention
+          </ThemedText>
         </View>
         <View style={styles.countBadge}>
-          <Text style={styles.countText}>{alerts.length}</Text>
+          <ThemedText type="smallBold" style={styles.countText}>
+            {alerts.length}
+          </ThemedText>
         </View>
       </View>
 
@@ -28,21 +36,22 @@ export function AlertsPanel({ alerts }: AlertsPanelProps) {
               <Ionicons name="scale-outline" size={16} color="#D97706" />
             </View>
             <View style={styles.alertBody}>
-              <Text style={styles.alertTitle}>{alert.title}</Text>
-              <Text style={styles.alertMeta}>
+              <ThemedText type="smallBold" style={styles.alertTitle}>
+                {alert.title}
+              </ThemedText>
+              <ThemedText type="small" themeColor="textSecondary" style={styles.alertMeta}>
                 {alert.register} · {alert.cashier} · {alert.date}
-              </Text>
+              </ThemedText>
             </View>
           </View>
         ))}
       </View>
-    </View>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#FFFFFF',
     borderRadius: 14,
     borderWidth: 1,
     borderColor: '#E2E8F0',
@@ -61,12 +70,11 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 15,
-    fontWeight: '700',
-    color: '#0F172A',
+    lineHeight: 20,
   },
   subtitle: {
     fontSize: 12,
-    color: '#64748B',
+    lineHeight: 17,
     marginTop: 2,
   },
   countBadge: {
@@ -80,7 +88,7 @@ const styles = StyleSheet.create({
   },
   countText: {
     fontSize: 12,
-    fontWeight: '700',
+    lineHeight: 16,
     color: '#DC2626',
   },
   list: {
@@ -105,12 +113,12 @@ const styles = StyleSheet.create({
   },
   alertTitle: {
     fontSize: 13,
-    fontWeight: '600',
+    lineHeight: 18,
     color: '#B45309',
   },
   alertMeta: {
     fontSize: 11.5,
-    color: '#78716C',
+    lineHeight: 16,
     marginTop: 2,
   },
 });

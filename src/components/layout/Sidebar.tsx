@@ -1,10 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import Svg, { Defs, LinearGradient, Path, Stop } from 'react-native-svg';
 
 import { SIDEBAR_FOOTER_ITEM, SIDEBAR_SECTIONS } from '@/constants/navigation';
 import { StoreAccount, StoreLocation } from '@/types/dashboard';
+import { ThemedText } from '@/ui/themedText';
+import { ThemedView } from '@/ui/themedView';
 
 interface SidebarProps {
   collapsed: boolean;
@@ -63,14 +65,20 @@ export function Sidebar({
   };
 
   return (
-    <View style={[styles.container, collapsed && !isMobileDrawer && styles.containerCollapsed]}>
+    <ThemedView
+      type="background"
+      style={[styles.container, collapsed && !isMobileDrawer && styles.containerCollapsed]}>
       {/* Brand Header */}
       <View style={[styles.brandRow, collapsed && !isMobileDrawer && styles.brandRowCollapsed]}>
         <Pressable
           style={styles.brandLeft}
           onPress={collapsed && onToggleCollapse ? onToggleCollapse : undefined}>
           <BrandLogoMark />
-          {(!collapsed || isMobileDrawer) && <Text style={styles.brandTitle}>Unleash Pos</Text>}
+          {(!collapsed || isMobileDrawer) && (
+            <ThemedText type="default" style={styles.brandTitle}>
+              Unleash Pos
+            </ThemedText>
+          )}
         </Pressable>
 
         {isMobileDrawer ? (
@@ -99,17 +107,19 @@ export function Sidebar({
           style={[styles.storeCard, collapsed && !isMobileDrawer && styles.storeCardCollapsed]}
           onPress={onOpenStoreSwitcher}>
           <View style={styles.storeAvatar}>
-            <Text style={styles.storeAvatarText}>{selectedLocation.initials}</Text>
+            <ThemedText type="smallBold" style={styles.storeAvatarText}>
+              {selectedLocation.initials}
+            </ThemedText>
           </View>
           {(!collapsed || isMobileDrawer) && (
             <>
               <View style={styles.storeInfo}>
-                <Text style={styles.storeName} numberOfLines={1}>
+                <ThemedText type="smallBold" style={styles.storeName} numberOfLines={1}>
                   {selectedLocation.name}
-                </Text>
-                <Text style={styles.storeTenant} numberOfLines={1}>
+                </ThemedText>
+                <ThemedText type="small" themeColor="textSecondary" style={styles.storeTenant} numberOfLines={1}>
                   {selectedAccount.name}
-                </Text>
+                </ThemedText>
               </View>
               <Ionicons name="swap-vertical-outline" size={16} color="#94A3B8" />
             </>
@@ -125,7 +135,9 @@ export function Sidebar({
         {SIDEBAR_SECTIONS.map((section) => (
           <View key={section.id} style={styles.sectionBlock}>
             {section.title && (!collapsed || isMobileDrawer) && (
-              <Text style={styles.sectionTitle}>{section.title}</Text>
+              <ThemedText type="smallBold" themeColor="textSecondary" style={styles.sectionTitle}>
+                {section.title}
+              </ThemedText>
             )}
 
             {section.items.map((item) => {
@@ -166,11 +178,12 @@ export function Sidebar({
                     />
                     {(!collapsed || isMobileDrawer) && (
                       <>
-                        <Text
+                        <ThemedText
+                          type={isActive ? 'smallBold' : 'small'}
                           style={[styles.navLabel, isActive && styles.navLabelActive]}
                           numberOfLines={1}>
                           {item.label}
-                        </Text>
+                        </ThemedText>
                         {hasChildren && (
                           <Ionicons
                             name={isExpanded ? 'chevron-down' : 'chevron-forward'}
@@ -202,11 +215,13 @@ export function Sidebar({
                               }
                             }}>
                             <View style={[styles.subDot, childActive && styles.subDotActive]} />
-                            <Text
+                            <ThemedText
+                              type={childActive ? 'smallBold' : 'small'}
+                              themeColor={childActive ? undefined : 'textSecondary'}
                               style={[styles.subLabel, childActive && styles.subLabelActive]}
                               numberOfLines={1}>
                               {child.label}
-                            </Text>
+                            </ThemedText>
                           </Pressable>
                         );
                       })}
@@ -240,24 +255,24 @@ export function Sidebar({
             color={activeItemId === SIDEBAR_FOOTER_ITEM.id ? '#1D64D8' : '#475569'}
           />
           {(!collapsed || isMobileDrawer) && (
-            <Text
+            <ThemedText
+              type={activeItemId === SIDEBAR_FOOTER_ITEM.id ? 'smallBold' : 'small'}
               style={[
                 styles.navLabel,
                 activeItemId === SIDEBAR_FOOTER_ITEM.id && styles.navLabelActive,
               ]}>
               {SIDEBAR_FOOTER_ITEM.label}
-            </Text>
+            </ThemedText>
           )}
         </Pressable>
       </View>
-    </View>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     width: 240,
-    backgroundColor: '#FFFFFF',
     borderRightWidth: 1,
     borderRightColor: '#E2E8F0',
     flexDirection: 'column',
@@ -284,8 +299,8 @@ const styles = StyleSheet.create({
   },
   brandTitle: {
     fontSize: 18,
+    lineHeight: 22,
     fontWeight: '800',
-    color: '#0F172A',
     letterSpacing: -0.3,
   },
   collapseBtn: {
@@ -325,7 +340,7 @@ const styles = StyleSheet.create({
   },
   storeAvatarText: {
     fontSize: 12,
-    fontWeight: '700',
+    lineHeight: 16,
     color: '#1D64D8',
   },
   storeInfo: {
@@ -333,12 +348,11 @@ const styles = StyleSheet.create({
   },
   storeName: {
     fontSize: 13,
-    fontWeight: '600',
-    color: '#0F172A',
+    lineHeight: 17,
   },
   storeTenant: {
     fontSize: 11,
-    color: '#64748B',
+    lineHeight: 15,
     marginTop: 1,
   },
   navScroll: {
@@ -353,12 +367,12 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 10,
-    fontWeight: '700',
+    lineHeight: 14,
     letterSpacing: 0.8,
-    color: '#94A3B8',
     paddingHorizontal: 10,
     marginBottom: 6,
     marginTop: 4,
+    opacity: 0.75,
   },
   navItem: {
     flexDirection: 'row',
@@ -382,12 +396,10 @@ const styles = StyleSheet.create({
   navLabel: {
     flex: 1,
     fontSize: 13.5,
-    fontWeight: '500',
-    color: '#334155',
+    lineHeight: 18,
   },
   navLabelActive: {
     color: '#1D64D8',
-    fontWeight: '600',
   },
   subList: {
     paddingLeft: 26,
@@ -416,12 +428,10 @@ const styles = StyleSheet.create({
   },
   subLabel: {
     fontSize: 13,
-    color: '#475569',
-    fontWeight: '500',
+    lineHeight: 18,
   },
   subLabelActive: {
     color: '#1D64D8',
-    fontWeight: '600',
   },
   footer: {
     borderTopWidth: 1,

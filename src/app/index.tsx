@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
 
 import { AlertsPanel } from '@/components/dashboard/AlertsPanel';
 import { SalesTrendChart } from '@/components/dashboard/SalesTrendChart';
@@ -12,6 +12,8 @@ import {
   SALES_TREND_14D,
   TOP_SELLING_GAMES,
 } from '@/data/dashboard';
+import { ThemedText } from '@/ui/themedText';
+import { ThemedView } from '@/ui/themedView';
 
 export default function HomeScreen() {
   const { width } = useWindowDimensions();
@@ -64,17 +66,21 @@ export default function HomeScreen() {
           </View>
         </>
       ) : (
-        <View style={styles.sectionPlaceholder}>
-          <Text style={styles.placeholderTitle}>{activeSectionTitle}</Text>
-          <Text style={styles.placeholderSubtitle}>
+        <ThemedView type="background" style={styles.sectionPlaceholder}>
+          <ThemedText type="smallBold" style={styles.placeholderTitle}>
+            {activeSectionTitle}
+          </ThemedText>
+          <ThemedText type="small" themeColor="textSecondary" style={styles.placeholderSubtitle}>
             This section is ready to be connected to your backend data.
-          </Text>
+          </ThemedText>
           <Pressable
             style={styles.backBtn}
             onPress={() => setActiveNavId('dashboard')}>
-            <Text style={styles.backBtnText}>Back to Dashboard</Text>
+            <ThemedText type="smallBold" style={styles.backBtnText}>
+              Back to Dashboard
+            </ThemedText>
           </Pressable>
-        </View>
+        </ThemedView>
       )}
     </AppLayout>
   );
@@ -101,7 +107,6 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   sectionPlaceholder: {
-    backgroundColor: '#FFFFFF',
     borderRadius: 14,
     borderWidth: 1,
     borderColor: '#E2E8F0',
@@ -113,12 +118,10 @@ const styles = StyleSheet.create({
   },
   placeholderTitle: {
     fontSize: 18,
-    fontWeight: '700',
-    color: '#0F172A',
+    lineHeight: 24,
   },
   placeholderSubtitle: {
     fontSize: 13.5,
-    color: '#64748B',
     textAlign: 'center',
   },
   backBtn: {
@@ -130,7 +133,7 @@ const styles = StyleSheet.create({
   },
   backBtnText: {
     fontSize: 13,
-    fontWeight: '600',
+    lineHeight: 18,
     color: '#FFFFFF',
   },
 });

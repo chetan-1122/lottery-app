@@ -1,6 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, TextInput, View } from 'react-native';
+
+import { ThemedText } from '@/ui/themedText';
+import { ThemedView } from '@/ui/themedView';
 
 interface TopHeaderProps {
   isDesktop: boolean;
@@ -20,14 +23,18 @@ export function TopHeader({
   const initial = tenantName.trim().charAt(0).toUpperCase() || 'T';
 
   return (
-    <View style={styles.header}>
+    <ThemedView type="background" style={styles.header}>
       <View style={styles.left}>
         {!isDesktop && (
           <Pressable onPress={onOpenMenu} style={styles.menuBtn} hitSlop={8}>
             <Ionicons name="menu-outline" size={24} color="#0F172A" />
           </Pressable>
         )}
-        {!isDesktop && <Text style={styles.mobileTitle}>Unleash Pos</Text>}
+        {!isDesktop && (
+          <ThemedText type="smallBold" style={styles.mobileTitle}>
+            Unleash Pos
+          </ThemedText>
+        )}
       </View>
 
       <View style={styles.right}>
@@ -41,9 +48,11 @@ export function TopHeader({
             style={styles.searchInput}
           />
           {isDesktop && (
-            <View style={styles.shortcutBadge}>
-              <Text style={styles.shortcutText}>⌘K</Text>
-            </View>
+            <ThemedView type="background" style={styles.shortcutBadge}>
+              <ThemedText type="code" themeColor="textSecondary" style={styles.shortcutText}>
+                ⌘K
+              </ThemedText>
+            </ThemedView>
           )}
         </View>
 
@@ -54,23 +63,28 @@ export function TopHeader({
         )}
 
         <View style={styles.userSection}>
-          {isDesktop && <Text style={styles.greeting}>Hi, {tenantName}</Text>}
+          {isDesktop && (
+            <ThemedText type="smallBold" style={styles.greeting}>
+              Hi, {tenantName}
+            </ThemedText>
+          )}
           <View style={styles.avatarWrap}>
             <View style={styles.avatar}>
-              <Text style={styles.avatarText}>{initial}</Text>
+              <ThemedText type="smallBold" style={styles.avatarText}>
+                {initial}
+              </ThemedText>
             </View>
             <View style={styles.onlineDot} />
           </View>
         </View>
       </View>
-    </View>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
   header: {
     height: 60,
-    backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
     borderBottomColor: '#E2E8F0',
     paddingHorizontal: 16,
@@ -90,8 +104,7 @@ const styles = StyleSheet.create({
   },
   mobileTitle: {
     fontSize: 16,
-    fontWeight: '700',
-    color: '#0F172A',
+    lineHeight: 20,
   },
   right: {
     flexDirection: 'row',
@@ -127,14 +140,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 5,
-    backgroundColor: '#FFFFFF',
     borderWidth: 1,
     borderColor: '#E2E8F0',
   },
   shortcutText: {
     fontSize: 11,
-    color: '#64748B',
-    fontWeight: '600',
   },
   iconBtn: {
     width: 34,
@@ -150,8 +160,7 @@ const styles = StyleSheet.create({
   },
   greeting: {
     fontSize: 13,
-    fontWeight: '600',
-    color: '#1E293B',
+    lineHeight: 18,
   },
   avatarWrap: {
     position: 'relative',
@@ -168,7 +177,7 @@ const styles = StyleSheet.create({
   },
   avatarText: {
     fontSize: 13,
-    fontWeight: '700',
+    lineHeight: 16,
     color: '#1D64D8',
   },
   onlineDot: {

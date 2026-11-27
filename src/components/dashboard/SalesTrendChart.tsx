@@ -1,9 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useMemo, useState } from 'react';
-import { LayoutChangeEvent, Pressable, StyleSheet, Text, View } from 'react-native';
+import { LayoutChangeEvent, Pressable, StyleSheet, View } from 'react-native';
 import Svg, { Circle, Line, Path, Text as SvgText } from 'react-native-svg';
 
 import { SalesTrendPoint } from '@/types/dashboard';
+import { ThemedText } from '@/ui/themedText';
+import { ThemedView } from '@/ui/themedView';
 
 interface SalesTrendChartProps {
   data: SalesTrendPoint[];
@@ -76,18 +78,22 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
   const showEveryNthLabel = chartWidth < 460 && visibleData.length > 7 ? 2 : 1;
 
   return (
-    <View style={styles.card}>
+    <ThemedView type="background" style={styles.card}>
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.titleWrap}>
           <View style={styles.titleRow}>
-            <Text style={styles.title}>Lottery Sales Trend</Text>
+            <ThemedText type="smallBold" style={styles.title}>
+              Lottery Sales Trend
+            </ThemedText>
             <Ionicons name="information-circle-outline" size={16} color="#94A3B8" />
           </View>
-          <Text style={styles.subtitle}>Instant vs online sales and payouts</Text>
+          <ThemedText type="small" themeColor="textSecondary" style={styles.subtitle}>
+            Instant vs online sales and payouts
+          </ThemedText>
         </View>
 
-        <View style={styles.rangeToggle}>
+        <ThemedView type="backgroundElement" style={styles.rangeToggle}>
           {(['7D', '14D'] as RangeOption[]).map((opt) => {
             const active = range === opt;
             return (
@@ -98,11 +104,16 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
                   setRange(opt);
                   setSelectedIndex(null);
                 }}>
-                <Text style={[styles.rangeText, active && styles.rangeTextActive]}>{opt}</Text>
+                <ThemedText
+                  type="smallBold"
+                  themeColor={active ? undefined : 'textSecondary'}
+                  style={[styles.rangeText, active && styles.rangeTextActive]}>
+                  {opt}
+                </ThemedText>
               </Pressable>
             );
           })}
-        </View>
+        </ThemedView>
       </View>
 
       {/* Chart Area */}
@@ -200,101 +211,133 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
         </View>
       </View>
 
-      {/* Interactive Tooltip Detail Card (shown when a date is tapped) */}
+      {/* Interactive Tooltip Detail Card */}
       {selectedPoint && (
-        <View style={styles.tooltipCard}>
+        <ThemedView type="background" style={styles.tooltipCard}>
           <View style={styles.tooltipHeader}>
-            <Text style={styles.tooltipDate}>{selectedPoint.item.fullDate}</Text>
+            <ThemedText type="smallBold" style={styles.tooltipDate}>
+              {selectedPoint.item.fullDate}
+            </ThemedText>
             <Pressable onPress={() => setSelectedIndex(null)} hitSlop={8}>
               <Ionicons name="close" size={16} color="#94A3B8" />
             </Pressable>
           </View>
 
-          <Text style={styles.tooltipSectionTitle}>SCRATCH TICKET SALES</Text>
+          <ThemedText type="smallBold" themeColor="textSecondary" style={styles.tooltipSectionTitle}>
+            SCRATCH TICKET SALES
+          </ThemedText>
 
           <View style={styles.tooltipRow}>
             <View style={styles.tooltipLegendLeft}>
               <View style={[styles.dot, { backgroundColor: '#3B6FD8' }]} />
-              <Text style={styles.tooltipLabel}>Instant (Scratch)</Text>
+              <ThemedText type="small" themeColor="textSecondary" style={styles.tooltipLabel}>
+                Instant (Scratch)
+              </ThemedText>
             </View>
-            <Text style={styles.tooltipAmount}>
+            <ThemedText type="smallBold" style={styles.tooltipAmount}>
               ${selectedPoint.item.instantSales.toFixed(2)}
-            </Text>
+            </ThemedText>
           </View>
 
           <View style={styles.tooltipRow}>
             <View style={styles.tooltipLegendLeft}>
               <View style={[styles.dot, { backgroundColor: '#93C5FD' }]} />
-              <Text style={styles.tooltipLabel}>Online / Draw</Text>
+              <ThemedText type="small" themeColor="textSecondary" style={styles.tooltipLabel}>
+                Online / Draw
+              </ThemedText>
             </View>
-            <Text style={styles.tooltipAmount}>
+            <ThemedText type="smallBold" style={styles.tooltipAmount}>
               ${selectedPoint.item.onlineSales.toFixed(2)}
-            </Text>
+            </ThemedText>
           </View>
 
           <View style={styles.tooltipRow}>
             <View style={styles.tooltipLegendLeft}>
               <View style={[styles.dot, { backgroundColor: '#64748B' }]} />
-              <Text style={styles.tooltipLabel}>Payouts</Text>
+              <ThemedText type="small" themeColor="textSecondary" style={styles.tooltipLabel}>
+                Payouts
+              </ThemedText>
             </View>
-            <Text style={styles.tooltipAmount}>
+            <ThemedText type="smallBold" style={styles.tooltipAmount}>
               -${selectedPoint.item.payouts.toFixed(2)}
-            </Text>
+            </ThemedText>
           </View>
 
           <View style={styles.tooltipDivider} />
 
           <View style={styles.tooltipRow}>
-            <Text style={styles.tooltipLabel}>Scratch tickets sold</Text>
-            <Text style={styles.tooltipAmount}>{selectedPoint.item.ticketsSold}</Text>
+            <ThemedText type="small" themeColor="textSecondary" style={styles.tooltipLabel}>
+              Scratch tickets sold
+            </ThemedText>
+            <ThemedText type="smallBold" style={styles.tooltipAmount}>
+              {selectedPoint.item.ticketsSold}
+            </ThemedText>
           </View>
 
           <View style={styles.tooltipRow}>
-            <Text style={styles.tooltipLabel}>Net lottery cash</Text>
-            <Text style={[styles.tooltipAmount, { color: '#1D64D8' }]}>
+            <ThemedText type="small" themeColor="textSecondary" style={styles.tooltipLabel}>
+              Net lottery cash
+            </ThemedText>
+            <ThemedText type="smallBold" style={[styles.tooltipAmount, { color: '#1D64D8' }]}>
               ${selectedPoint.item.netCash.toFixed(2)}
-            </Text>
+            </ThemedText>
           </View>
 
-          <Text style={[styles.tooltipSectionTitle, { marginTop: 10 }]}>LOTTERY INVENTORY</Text>
+          <ThemedText
+            type="smallBold"
+            themeColor="textSecondary"
+            style={[styles.tooltipSectionTitle, { marginTop: 10 }]}>
+            LOTTERY INVENTORY
+          </ThemedText>
 
           <View style={styles.inventoryRow}>
-            <View style={styles.inventoryBox}>
-              <Text style={styles.inventoryVal}>{selectedPoint.item.activeBooks}</Text>
-              <Text style={styles.inventorySub}>Active books</Text>
-            </View>
-            <View style={styles.inventoryBox}>
-              <Text style={styles.inventoryVal}>
+            <ThemedView type="backgroundElement" style={styles.inventoryBox}>
+              <ThemedText type="smallBold" style={styles.inventoryVal}>
+                {selectedPoint.item.activeBooks}
+              </ThemedText>
+              <ThemedText type="small" themeColor="textSecondary" style={styles.inventorySub}>
+                Active books
+              </ThemedText>
+            </ThemedView>
+            <ThemedView type="backgroundElement" style={styles.inventoryBox}>
+              <ThemedText type="smallBold" style={styles.inventoryVal}>
                 {selectedPoint.item.ticketsInStock.toLocaleString()}
-              </Text>
-              <Text style={styles.inventorySub}>Tickets in stock</Text>
-            </View>
+              </ThemedText>
+              <ThemedText type="small" themeColor="textSecondary" style={styles.inventorySub}>
+                Tickets in stock
+              </ThemedText>
+            </ThemedView>
           </View>
-        </View>
+        </ThemedView>
       )}
 
       {/* Legend */}
       <View style={styles.legendRow}>
         <View style={styles.legendItem}>
           <View style={[styles.dot, { backgroundColor: '#3B6FD8' }]} />
-          <Text style={styles.legendText}>Instant (Scratch)</Text>
+          <ThemedText type="small" themeColor="textSecondary" style={styles.legendText}>
+            Instant (Scratch)
+          </ThemedText>
         </View>
         <View style={styles.legendItem}>
           <View style={[styles.dot, { backgroundColor: '#93C5FD' }]} />
-          <Text style={styles.legendText}>Online / Draw</Text>
+          <ThemedText type="small" themeColor="textSecondary" style={styles.legendText}>
+            Online / Draw
+          </ThemedText>
         </View>
         <View style={styles.legendItem}>
           <View style={[styles.dot, { backgroundColor: '#64748B' }]} />
-          <Text style={styles.legendText}>Payouts</Text>
+          <ThemedText type="small" themeColor="textSecondary" style={styles.legendText}>
+            Payouts
+          </ThemedText>
         </View>
       </View>
-    </View>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#FFFFFF',
     borderRadius: 14,
     borderWidth: 1,
     borderColor: '#E2E8F0',
@@ -322,17 +365,15 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 15,
-    fontWeight: '700',
-    color: '#0F172A',
+    lineHeight: 20,
   },
   subtitle: {
     fontSize: 12,
-    color: '#64748B',
+    lineHeight: 17,
     marginTop: 2,
   },
   rangeToggle: {
     flexDirection: 'row',
-    backgroundColor: '#F1F5F9',
     borderRadius: 8,
     padding: 3,
     gap: 2,
@@ -347,8 +388,7 @@ const styles = StyleSheet.create({
   },
   rangeText: {
     fontSize: 12,
-    fontWeight: '600',
-    color: '#475569',
+    lineHeight: 16,
   },
   rangeTextActive: {
     color: '#FFFFFF',
@@ -370,7 +410,6 @@ const styles = StyleSheet.create({
   tooltipCard: {
     marginTop: 12,
     marginBottom: 6,
-    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     borderWidth: 1,
     borderColor: '#E2E8F0',
@@ -390,14 +429,12 @@ const styles = StyleSheet.create({
   },
   tooltipDate: {
     fontSize: 13,
-    fontWeight: '700',
-    color: '#0F172A',
+    lineHeight: 18,
   },
   tooltipSectionTitle: {
     fontSize: 10,
-    fontWeight: '700',
+    lineHeight: 14,
     letterSpacing: 0.7,
-    color: '#64748B',
     marginBottom: 6,
   },
   tooltipRow: {
@@ -413,12 +450,11 @@ const styles = StyleSheet.create({
   },
   tooltipLabel: {
     fontSize: 12,
-    color: '#475569',
+    lineHeight: 16,
   },
   tooltipAmount: {
     fontSize: 12,
-    fontWeight: '700',
-    color: '#0F172A',
+    lineHeight: 16,
   },
   tooltipDivider: {
     height: 1,
@@ -431,7 +467,6 @@ const styles = StyleSheet.create({
   },
   inventoryBox: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#EEF2F6',
@@ -439,12 +474,11 @@ const styles = StyleSheet.create({
   },
   inventoryVal: {
     fontSize: 13.5,
-    fontWeight: '700',
-    color: '#0F172A',
+    lineHeight: 18,
   },
   inventorySub: {
     fontSize: 10.5,
-    color: '#64748B',
+    lineHeight: 14,
     marginTop: 2,
   },
   legendRow: {
@@ -466,6 +500,6 @@ const styles = StyleSheet.create({
   },
   legendText: {
     fontSize: 12,
-    color: '#475569',
+    lineHeight: 16,
   },
 });
